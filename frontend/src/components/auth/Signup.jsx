@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from '../../styles/components/auth/signup.module.css'
+import { auth } from '../../api'
 
 const Signup = () => {
   const navigate = useNavigate()
@@ -31,24 +32,12 @@ const Signup = () => {
     }
 
     try {
-      // Send signup request
-      const response = await fetch('/api/auth/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      })
-
-      if (response.ok) {
-        const data = await response.json()
-        // Store email temporarily for OTP verification
-        sessionStorage.setItem('verificationEmail', formData.email)
-        navigate('/otp-verification')
-      } else {
-        const data = await response.json()
-        setError(data.message || 'Signup failed')
-      }
+      await auth.register(formData)
+      // Store email temporarily for OTP verification
+      sessionStorage.setItem('verificationEmail', formData.email)
+      navigate('/otp-verification')
     } catch (err) {
-      setError('Something went wrong. Please try again.')
+      setError(err.message || 'Something went wrong. Please try again.')
     }
   }
 

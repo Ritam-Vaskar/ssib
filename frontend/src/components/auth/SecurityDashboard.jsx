@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import styles from '../../styles/components/auth/dashboard.module.css'
+import api, { security } from '../../api'
 
 const SecurityDashboard = () => {
   const [activeTab, setActiveTab] = useState('assignments')
@@ -13,9 +14,8 @@ const SecurityDashboard = () => {
 
   const fetchAssignments = async () => {
     try {
-      const response = await fetch('/api/security/assignments')
-      const data = await response.json()
-      setAssignments(data)
+      const response = await api.get('/security/assignments')
+      setAssignments(response.data)
     } catch (err) {
       console.error('Error fetching assignments:', err)
     }
@@ -23,9 +23,8 @@ const SecurityDashboard = () => {
 
   const fetchBills = async () => {
     try {
-      const response = await fetch('/api/security/bills')
-      const data = await response.json()
-      setBills(data)
+      const response = await api.get('/security/bills')
+      setBills(response.data)
     } catch (err) {
       console.error('Error fetching bills:', err)
     }
@@ -33,14 +32,9 @@ const SecurityDashboard = () => {
 
   const updateAssignmentStatus = async (assignmentId, status) => {
     try {
-      const response = await fetch('/api/security/update-status', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ assignmentId, status })
-      })
-      if (response.ok) {
-        fetchAssignments()
-      }
+      const payload = { assignmentId, status }
+      await security.updateAssignmentStatus(payload)
+      fetchAssignments()
     } catch (err) {
       console.error('Error updating status:', err)
     }

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import styles from '../../styles/components/auth/dashboard.module.css'
-
+import { client } from '../../api'
 const ClientDashboard = () => {
   const [activeTab, setActiveTab] = useState('status')
   const [guardInfo, setGuardInfo] = useState(null)
@@ -19,45 +19,41 @@ const ClientDashboard = () => {
 
   const fetchGuardInfo = async () => {
     try {
-      const response = await fetch('/api/client/guard-info')
-      const data = await response.json()
-      setGuardInfo(data)
+      const response = await client.getProfile()
+      setGuardInfo(response.data.assignedGuard || null)
     } catch (err) {
       console.error('Error fetching guard info:', err)
     }
   }
+  
 
   const fetchBills = async () => {
     try {
-      const response = await fetch('/api/client/bills')
-      const data = await response.json()
-      setBills(data)
+      const response = await client.getBills()
+      setBills(response.data)
     } catch (err) {
       console.error('Error fetching bills:', err)
     }
   }
+  
+  
 
   const handleApplicationSubmit = async (e) => {
     e.preventDefault()
     try {
-      const response = await fetch('/api/client/submit-application', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(applicationForm)
+      await client.requestService(applicationForm)
+      setApplicationForm({
+        serviceType: 'residential',
+        requirements: '',
+        duration: '',
+        location: ''
       })
-      if (response.ok) {
-        setApplicationForm({
-          serviceType: 'residential',
-          requirements: '',
-          duration: '',
-          location: ''
-        })
-        alert('Application submitted successfully!')
-      }
+      alert('Application submitted successfully!')
     } catch (err) {
       console.error('Error submitting application:', err)
     }
   }
+  
 
   return (
     <div className={styles.dashboard}>

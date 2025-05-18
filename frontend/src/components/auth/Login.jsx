@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from '../../styles/components/auth/login.module.css'
+import { auth } from '../../api'
 
 const Login = () => {
   const navigate = useNavigate()
@@ -21,37 +22,25 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      // TODO: Implement API call for login
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      })
-
-      if (response.ok) {
-        const data = await response.json()
-        localStorage.setItem('token', data.token)
-        localStorage.setItem('role', formData.role)
-        
-        // Redirect based on role
-        switch(formData.role) {
-          case 'admin':
-            navigate('/admin-dashboard')
-            break
-          case 'client':
-            navigate('/client-dashboard')
-            break
-          case 'security':
-            navigate('/security-dashboard')
-            break
-          default:
-            navigate('/client-dashboard')
-        }
-      } else {
-        setError('Invalid credentials')
+      await auth.login(formData)
+      localStorage.setItem('token', 'dummy-token')
+      localStorage.setItem('role', formData.role)
+      // Redirect based on role
+      switch(formData.role) {
+        case 'admin':
+          navigate('/admin-dashboard')
+          break
+        case 'client':
+          navigate('/client-dashboard')
+          break
+        case 'security':
+          navigate('/security-dashboard')
+          break
+        default:
+          navigate('/client-dashboard')
       }
     } catch (err) {
-      setError('Something went wrong. Please try again.')
+      setError(err.message || 'Something went wrong. Please try again.')
     }
   }
 

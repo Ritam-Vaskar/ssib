@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from '../../styles/components/auth/otpVerification.module.css'
+import { auth } from '../../api'
 
 const OTPVerification = () => {
   const navigate = useNavigate()
@@ -34,20 +35,11 @@ const OTPVerification = () => {
 
     setIsResending(true)
     try {
-      const response = await fetch('/api/auth/resend-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
-      })
-
-      if (response.ok) {
-        setTimer(60)
-        setError('')
-      } else {
-        setError('Failed to resend OTP')
-      }
+      await auth.resendOTP({ email })
+      setTimer(60)
+      setError('')
     } catch (err) {
-      setError('Something went wrong')
+      setError('Failed to resend OTP')
     }
     setIsResending(false)
   }
@@ -61,23 +53,11 @@ const OTPVerification = () => {
     }
 
     try {
-      const response = await fetch('/api/auth/verify-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email,
-          otp: otp.join('')
-        })
-      })
-
-      if (response.ok) {
-        sessionStorage.removeItem('verificationEmail')
-        navigate('/login')
-      } else {
-        setError('Invalid OTP')
-      }
+      await auth.verifyOTP({ email, otp: otp.join('') })
+      sessionStorage.removeItem('verificationEmail')
+      navigate('/login')
     } catch (err) {
-      setError('Something went wrong')
+      setError('Invalid OTP')
     }
   }
 

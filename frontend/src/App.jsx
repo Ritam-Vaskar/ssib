@@ -17,13 +17,13 @@ import SecurityDashboard from './components/auth/SecurityDashboard'
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const token = localStorage.getItem('token')
-  const userRole = localStorage.getItem('role')
+  const role = localStorage.getItem('role')
 
   if (!token) {
     return <Navigate to="/login" replace />
   }
 
-  if (!allowedRoles.includes(userRole)) {
+  if (!allowedRoles.includes(role)) {
     return <Navigate to="/" replace />
   }
 

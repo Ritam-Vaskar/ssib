@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from '../../styles/components/auth/forgotPassword.module.css'
+import { auth } from '../../api'
 
 const ForgotPassword = () => {
   const navigate = useNavigate()
@@ -15,22 +16,12 @@ const ForgotPassword = () => {
   const handleEmailSubmit = async (e) => {
     e.preventDefault()
     try {
-      const response = await fetch('/api/auth/forgot-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
-      })
-
-      if (response.ok) {
-        setStep(2)
-        // Start timer for OTP
-        const interval = setInterval(() => {
-          setTimer((prev) => prev > 0 ? prev - 1 : 0)
-        }, 1000)
-        return () => clearInterval(interval)
-      } else {
-        setError('Email not found')
-      }
+      await auth.forgotPassword({ email })
+      setStep(2)
+      const interval = setInterval(() => {
+        setTimer((prev) => prev > 0 ? prev - 1 : 0)
+      }, 1000)
+      return () => clearInterval(interval)
     } catch (err) {
       setError('Something went wrong')
     }
@@ -39,17 +30,8 @@ const ForgotPassword = () => {
   const handleOTPSubmit = async (e) => {
     e.preventDefault()
     try {
-      const response = await fetch('/api/auth/verify-reset-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, otp })
-      })
-
-      if (response.ok) {
-        setStep(3)
-      } else {
-        setError('Invalid OTP')
-      }
+      await auth.verifyOTP({ email, otp })
+      setStep(3)
     } catch (err) {
       setError('Something went wrong')
     }
@@ -63,17 +45,8 @@ const ForgotPassword = () => {
     }
 
     try {
-      const response = await fetch('/api/auth/reset-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, otp, newPassword })
-      })
-
-      if (response.ok) {
-        navigate('/login')
-      } else {
-        setError('Password reset failed')
-      }
+      await auth.resetPassword({ email, otp, newPassword })
+      navigate('/login')
     } catch (err) {
       setError('Something went wrong')
     }
@@ -82,18 +55,9 @@ const ForgotPassword = () => {
   const resendOTP = async () => {
     if (timer > 0) return
     try {
-      const response = await fetch('/api/auth/resend-reset-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
-      })
-
-      if (response.ok) {
-        setTimer(60)
-        setError('')
-      } else {
-        setError('Failed to resend OTP')
-      }
+      await auth.resendOTP({ email })
+      setTimer(60)
+      setError('')
     } catch (err) {
       setError('Something went wrong')
     }
