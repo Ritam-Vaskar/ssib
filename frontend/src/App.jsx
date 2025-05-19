@@ -14,16 +14,31 @@ import ForgotPassword from './components/auth/ForgotPassword'
 import AdminDashboard from './components/auth/AdminDashboard'
 import ClientDashboard from './components/auth/ClientDashboard'
 import SecurityDashboard from './components/auth/SecurityDashboard'
+import { AuthProvider } from './context/AuthContext'
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const token = localStorage.getItem('token')
   const role = localStorage.getItem('role')
+  const [isLoading, setIsLoading] = useState(true)
+  const [isAuthorized, setIsAuthorized] = useState(false)
+
+  useEffect(() => {
+    // Check auth status
+    if (token && allowedRoles.includes(role)) {
+      setIsAuthorized(true)
+    }
+    setIsLoading(false)
+  }, [token, role, allowedRoles])
+
+  if (isLoading) {
+    return <div>Loading...</div>
+  }
 
   if (!token) {
     return <Navigate to="/login" replace />
   }
 
-  if (!allowedRoles.includes(role)) {
+  if (!isAuthorized) {
     return <Navigate to="/" replace />
   }
 
@@ -45,57 +60,59 @@ function App() {
   }, [])
 
   return (
-    <Router>
-      <div className="app">
-        <Navbar isAuthenticated={isAuthenticated} userRole={userRole} />
-        
-        <main className="main-content">
-          <Routes>
-            {/* Public Routes */}
-            <Route path="/" element={<Landing />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/services" element={<Services />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/otp-verification" element={<OTPVerification />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
+    <AuthProvider>
+      <Router>
+        <div className="app">
+          <Navbar isAuthenticated={isAuthenticated} userRole={userRole} />
+          
+          <main className="main-content">
+            <Routes>
+              {/* Public Routes */}
+              <Route path="/" element={<Landing />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/services" element={<Services />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/otp-verification" element={<OTPVerification />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
 
-            {/* Protected Routes */}
-            <Route
-              path="/admin-dashboard"
-              element={
-                <ProtectedRoute allowedRoles={['admin']}>
-                  <AdminDashboard />
-                </ProtectedRoute>
-              }
-            />
+              {/* Protected Routes */}
+              <Route
+                path="/admin-dashboard"
+                element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                }
+              />
 
-            <Route
-              path="/client-dashboard"
-              element={
-                <ProtectedRoute allowedRoles={['client']}>
-                  <ClientDashboard />
-                </ProtectedRoute>
-              }
-            />
+              <Route
+                path="/client-dashboard"
+                element={
+                  <ProtectedRoute allowedRoles={['client']}>
+                    <ClientDashboard />
+                  </ProtectedRoute>
+                }
+              />
 
-            <Route
-              path="/security-dashboard"
-              element={
-                <ProtectedRoute allowedRoles={['security']}>
-                  <SecurityDashboard />
-                </ProtectedRoute>
-              }
-            />
+              <Route
+                path="/security-dashboard"
+                element={
+                  <ProtectedRoute allowedRoles={['security']}>
+                    <SecurityDashboard />
+                  </ProtectedRoute>
+                }
+              />
 
-            {/* Fallback Route */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </main>
+              {/* Fallback Route */}
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </main>
 
-        <Footer />
-      </div>
-    </Router>
+          <Footer />
+        </div>
+      </Router>
+    </AuthProvider>
   )
 }
 

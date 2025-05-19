@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from '../../styles/components/auth/login.module.css'
 import { auth } from '../../api'
@@ -11,6 +11,7 @@ const Login = () => {
     role: 'client' // Default role
   })
   const [error, setError] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleChange = (e) => {
     setFormData({
@@ -21,26 +22,48 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    setIsLoading(true)
+    setError('')
+    
     try {
-      await auth.login(formData)
-      localStorage.setItem('token', 'dummy-token')
+      console.log('Attempting login with:', { email: formData.email, role: formData.role })
+      const response = await auth.login(formData)
+      console.log('Login response:', response.data)
+      
+      // Store the actual token from response if available
+      const token = response.data?.token || 'dummy-token'
+      localStorage.setItem('token', token)
       localStorage.setItem('role', formData.role)
-      // Redirect based on role
-      switch(formData.role) {
-        case 'admin':
-          navigate('/admin-dashboard')
-          break
-        case 'client':
-          navigate('/client-dashboard')
-          break
-        case 'security':
-          navigate('/security-dashboard')
-          break
-        default:
-          navigate('/client-dashboard')
-      }
+      
+      // Force a state change to trigger re-render
+      window.location.href = getRedirectPath(formData.role)
     } catch (err) {
-      setError(err.message || 'Something went wrong. Please try again.')
+      console.error('Login error:', err)
+      const errorMsg = err.response?.data?.message || 'Login failed. Please check your credentials.'
+      setError(errorMsg)
+      
+      // Display more detailed error for debugging
+      // if (errorMsg === 'Invalid credentials') {
+      //   console.log('Debug info: Server returned invalid credentials. This could mean:')
+      //   console.log('1. The email does not exist in the database')
+      //   console.log('2. The password is incorrect')
+      //   console.log('3. The role might not match what in the database)
+      // }
+    } finally {
+      setIsLoading(false)
+    }
+  }
+  
+  const getRedirectPath = (role) => {
+    switch(role) {
+      case 'admin':
+        return '/admin-dashboard'
+      case 'client':
+        return '/client-dashboard'
+      case 'security':
+        return '/security-dashboard'
+      default:
+        return '/client-dashboard'
     }
   }
 
@@ -89,8 +112,12 @@ const Login = () => {
             />
           </div>
 
-          <button type="submit" className={styles.loginButton}>
-            Login
+          <button 
+            type="submit" 
+            className={styles.loginButton}
+            disabled={isLoading}
+          >
+            {isLoading ? 'Logging in...' : 'Login'}
           </button>
         </form>
 

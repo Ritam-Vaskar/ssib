@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = `${import.meta.env.VITE_APP_API_URL}/api`;
+const API_BASE_URL = `${import.meta.env.VITE_APP_API_URL || 'http://localhost:5000'}/api`;
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -28,11 +28,8 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('role');
-      window.location.href = '/login';
-    }
+    // Don't automatically redirect on 401, just reject the promise
+    // This allows components to handle the error themselves
     return Promise.reject(error);
   }
 );
@@ -45,6 +42,7 @@ export const auth = {
   resendOTP: (data) => api.post('/auth/resend-otp', data),
   forgotPassword: (data) => api.post('/auth/forgot-password', data),
   resetPassword: (data) => api.put('/auth/reset-password', data),
+  checkAuthStatus: () => api.get('/auth/status'),
 };
 
 // Admin endpoints
