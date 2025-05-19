@@ -1,11 +1,12 @@
 .aboutContainer {
   min-height: 100vh;
+  background-color: #f8f9fa;
 }
 
 .aboutHero {
-  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
-              url('/src/assets/about-bg.jpg') center/cover;
-  height: 400px;
+  background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.8)),
+              url('https://t3.ftcdn.net/jpg/09/99/16/54/240_F_999165478_CTfBHAasJvAqdneePNBBitxuEaY8Q4eK.jpg') center/cover;
+  height: 500px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -13,63 +14,172 @@
   color: #fff;
   text-align: center;
   padding: 0 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.aboutHero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(0, 123, 255, 0.3), rgba(0, 0, 0, 0.4));
+  z-index: 1;
 }
 
 .aboutHero h1 {
-  font-size: 3rem;
-  margin-bottom: 1rem;
+  font-size: 3.5rem;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  position: relative;
+  z-index: 2;
+  animation: fadeInDown 1s ease-out;
 }
 
 .aboutHero p {
-  font-size: 1.2rem;
+  font-size: 1.4rem;
+  position: relative;
+  z-index: 2;
+  animation: fadeInUp 1s ease-out;
+  max-width: 700px;
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .aboutContent {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 4rem 2rem;
+  padding: 5rem 2rem;
+  position: relative;
 }
 
 .missionSection,
 .valuesSection,
 .teamSection {
-  margin-bottom: 4rem;
+  margin-bottom: 5rem;
+  position: relative;
+  color: #333;
 }
 
 .missionSection h2,
 .valuesSection h2,
 .teamSection h2 {
-  font-size: 2rem;
-  color: #333;
-  margin-bottom: 1.5rem;
+  font-size: 2.5rem;
+  color: #1a1a1a;
+  margin-bottom: 2rem;
+  text-align: center;
+  font-weight: 700;
+}
+
+.missionSection h2::after,
+.valuesSection h2::after,
+.teamSection h2::after {
+  content: '';
+  display: block;
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, #007bff, #00a6ff);
+  margin: 1rem auto 2rem;
+  border-radius: 2px;
 }
 
 .valueGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
-  margin-top: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2.5rem;
+  margin-top: 3rem;
 }
 
 .valueCard {
-  background: #f8f9fa;
-  padding: 2rem;
-  border-radius: 8px;
+  background: #ffffff;
+  padding: 2.5rem;
+  border-radius: 12px;
   text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  transition: all 0.4s ease;
+  border-bottom: 4px solid transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.valueCard:hover {
+  transform: translateY(-10px);
+  border-bottom: 4px solid #007bff;
+}
+
+.valueCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 0;
+  background: linear-gradient(to bottom, rgba(0, 123, 255, 0.05), transparent);
+  transition: height 0.4s ease;
+}
+
+.valueCard:hover::before {
+  height: 100%;
 }
 
 .valueCard h3 {
   color: #007bff;
-  margin-bottom: 1rem;
+  margin-bottom: 1.2rem;
+  font-size: 1.5rem;
+  font-weight: 600;
 }
 
 .valueCard p {
-  color: #666;
-  line-height: 1.6;
+  color: #555;
+  line-height: 1.8;
 }
 
 .teamSection p {
-  color: #666;
+  color: #555;
   line-height: 1.8;
   max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+  font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+  .aboutHero h1 {
+    font-size: 2.8rem;
+  }
+  
+  .aboutHero p {
+    font-size: 1.2rem;
+  }
+  
+  .missionSection h2,
+  .valuesSection h2,
+  .teamSection h2 {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .aboutHero h1 {
+    font-size: 2.3rem;
+  }
+  
+  .aboutHero p {
+    font-size: 1.1rem;
+  }
+  
+  .valueCard {
+    padding: 2rem;
+  }
 }

@@ -5,7 +5,7 @@
 
 .servicesHero {
   background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)),
-              url('/src/assets/services-bg.jpg') center/cover;
+              url('https://manajobs.ca/wp-content/uploads/2022/12/Security-Cover-e1670440520699-840x430.png') center/cover;
   height: 450px;
   display: flex;
   flex-direction: column;

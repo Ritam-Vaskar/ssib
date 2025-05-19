@@ -1,7 +1,7 @@
 .hero {
   height: 100vh;
   background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7)),
-              url('/src/assets/hero-bg.jpg') center/cover;
+              url('https://nyguards.com/wp-content/uploads/2019/08/security-guard-duties-responsibilities.jpg') center/cover;
   display: flex;
   align-items: center;
   justify-content: center;

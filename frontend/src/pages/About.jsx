@@ -15,7 +15,7 @@ const About = () => {
         <section className={styles.aboutContent}>
           <div className={styles.missionSection}>
             <h2>Our Mission</h2>
-            <p>To provide professional and reliable security services that ensure the safety and peace of mind of our clients through innovative solutions and exceptional service.</p>
+            <p>To provide professional, reliable, and comprehensive security services that prioritize the safety, well-being, and peace of mind of our clients by leveraging cutting-edge technology, highly trained personnel, and a commitment to excellence, while continuously evolving to meet the dynamic security needs of modern environments.</p>
           </div>
           
           <div className={styles.valuesSection}>

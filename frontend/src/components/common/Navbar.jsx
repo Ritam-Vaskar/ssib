@@ -39,7 +39,7 @@ const Navbar = () => {
   return (
     <nav className={`${styles.navbar} ${scrolled ? styles.scrolled : ''}`}>
       <div className={styles.logo}>
-        <Link to="/">SSIB Service</Link>
+        <Link to="/"><span style={{ color: '#007bff' }}>SSIB</span> Service</Link>
       </div>
       
       <div className={styles.hamburger} onClick={toggleMenu}>
