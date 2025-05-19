@@ -74,15 +74,7 @@ const Gallery = () => {
           </button>
         </div>
         
-        <div className={styles.indicators}>
-          {images.map((_, index) => (
-            <button 
-              key={index} 
-              className={`${styles.indicator} ${index === currentIndex ? styles.active : ''}`}
-              onClick={() => setCurrentIndex(index)}
-            />
-          ))}
-        </div>
+
       </div>
     </section>
   );

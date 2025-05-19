@@ -11,13 +11,13 @@
   font-weight: 700;
 }
 
-.services::after {
+.services h2::after {
   content: '';
   display: block;
   width: 80px;
   height: 4px;
   background-color: #007bff;
-  margin: 0 auto 3rem;
+  margin: 1rem auto 3rem;
   border-radius: 2px;
 }
 

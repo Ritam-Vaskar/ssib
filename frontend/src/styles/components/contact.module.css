@@ -86,17 +86,20 @@
 .formGroup textarea {
   width: 100%;
   padding: 1rem;
-  border: 1px solid #e0e0e0;
+  border: 1px solid #e8e8e8;
   border-radius: 8px;
   font-size: 1rem;
   transition: all 0.3s ease;
+  background-color: #f8f9fa;
+  color: #495057;
 }
 
 .formGroup input:focus,
 .formGroup textarea:focus {
   outline: none;
   border-color: #007bff;
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+  background-color: #ffffff;
 }
 
 .formGroup textarea {

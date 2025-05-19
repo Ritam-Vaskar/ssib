@@ -106,16 +106,7 @@ const Testimonials = () => {
           </button>
         </div>
         
-        <div className={styles.dots}>
-          {testimonials.map((_, index) => (
-            <button 
-              key={index} 
-              className={`${styles.dot} ${index === activeIndex ? styles.active : ''}`}
-              onClick={() => setActiveIndex(index)}
-              aria-label={`Go to testimonial ${index + 1}`}
-            />
-          ))}
-        </div>
+
       </div>
     </section>
   );
