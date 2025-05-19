@@ -1,0 +1,40 @@
+.landingPage {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* Ensure smooth scrolling when navigating between sections */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Global responsive adjustments */
+@media (max-width: 1200px) {
+  .landingPage section {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (max-width: 992px) {
+  .landingPage section {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .landingPage section {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .landingPage section {
+    padding-top: 2.5rem;
+    padding-bottom: 2.5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}

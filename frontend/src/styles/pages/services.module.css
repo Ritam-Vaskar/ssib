@@ -1,11 +1,12 @@
 .servicesContainer {
   min-height: 100vh;
+  background-color: #f8f9fa;
 }
 
 .servicesHero {
-  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)),
               url('/src/assets/services-bg.jpg') center/cover;
-  height: 400px;
+  height: 450px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -13,71 +14,141 @@
   color: #fff;
   text-align: center;
   padding: 0 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.heroOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(0, 123, 255, 0.3), rgba(0, 0, 0, 0.4));
+  z-index: 1;
 }
 
 .servicesHero h1 {
-  font-size: 3rem;
+  font-size: 3.5rem;
   margin-bottom: 1rem;
+  font-weight: 700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  position: relative;
+  z-index: 2;
+  animation: fadeIn 1s ease-out;
 }
 
 .servicesHero p {
-  font-size: 1.2rem;
+  font-size: 1.4rem;
+  position: relative;
+  z-index: 2;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  animation: fadeIn 1.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .servicesContent {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 4rem 2rem;
+  padding: 5rem 2rem;
+  position: relative;
 }
 
 .servicesGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 2rem;
-  margin-bottom: 4rem;
+  gap: 2.5rem;
+  margin-bottom: 5rem;
 }
 
 .serviceCard {
   background: #fff;
-  border-radius: 8px;
-  padding: 2rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
+  border-radius: 12px;
+  padding: 2.5rem 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  transition: all 0.4s ease;
+  border-bottom: 4px solid transparent;
+  position: relative;
+  overflow: hidden;
 }
 
 .serviceCard:hover {
-  transform: translateY(-5px);
+  transform: translateY(-10px);
+  border-bottom: 4px solid #007bff;
+}
+
+.serviceCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 0;
+  background: linear-gradient(to bottom, rgba(0, 123, 255, 0.05), transparent);
+  transition: height 0.4s ease;
+}
+
+.serviceCard:hover::before {
+  height: 100%;
+}
+
+.serviceIconWrapper {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
 }
 
 .serviceIcon {
-  font-size: 3rem;
-  margin-bottom: 1rem;
+  font-size: 2rem;
+  color: #fff;
   text-align: center;
 }
 
 .serviceCard h2 {
-  color: #333;
+  color: #222;
   margin-bottom: 1rem;
   text-align: center;
+  font-weight: 600;
+  font-size: 1.5rem;
 }
 
 .serviceDescription {
-  color: #666;
+  color: #555;
   margin-bottom: 1.5rem;
   text-align: center;
+  line-height: 1.6;
 }
 
 .featuresList {
   list-style: none;
   padding: 0;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
+  border-top: 1px solid #eee;
+  padding-top: 1rem;
 }
 
 .featuresList li {
-  color: #555;
-  padding: 0.5rem 0;
-  padding-left: 1.5rem;
+  color: #444;
+  padding: 0.7rem 0;
+  padding-left: 1.8rem;
   position: relative;
+  transition: transform 0.3s ease;
+}
+
+.featuresList li:hover {
+  transform: translateX(5px);
 }
 
 .featuresList li::before {
@@ -85,54 +156,136 @@
   color: #007bff;
   position: absolute;
   left: 0;
+  font-weight: bold;
 }
 
 .inquireButton {
   width: 100%;
-  padding: 0.8rem;
+  padding: 1rem;
   background-color: #007bff;
   color: #fff;
   border: none;
-  border-radius: 4px;
+  border-radius: 50px;
   font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+  position: relative;
+  overflow: hidden;
 }
 
 .inquireButton:hover {
   background-color: #0056b3;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0, 123, 255, 0.4);
+}
+
+.inquireButton::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.5);
+  opacity: 0;
+  border-radius: 100%;
+  transform: scale(1, 1) translate(-50%);
+  transform-origin: 50% 50%;
+}
+
+.inquireButton:hover::after {
+  animation: ripple 1s ease-out;
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(0, 0);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(20, 20);
+    opacity: 0;
+  }
 }
 
 .whyChooseUs {
-  margin-top: 4rem;
+  margin-top: 5rem;
   text-align: center;
+  padding: 4rem 2rem;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  border-radius: 20px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
 }
 
 .whyChooseUs h2 {
-  font-size: 2rem;
-  color: #333;
-  margin-bottom: 2rem;
+  font-size: 2.2rem;
+  color: #222;
+  margin-bottom: 3rem;
+  position: relative;
+  display: inline-block;
+  font-weight: 700;
+}
+
+.whyChooseUs h2::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  background: linear-gradient(to right, #007bff, #0056b3);
 }
 
 .benefitsGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
+  gap: 2.5rem;
 }
 
 .benefitCard {
-  background: #f8f9fa;
-  padding: 2rem;
-  border-radius: 8px;
+  background: #fff;
+  padding: 2.5rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.benefitCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 0;
+  background: linear-gradient(to bottom, rgba(0, 123, 255, 0.05), transparent);
+  transition: height 0.4s ease;
+  z-index: -1;
+}
+
+.benefitCard:hover {
+  transform: translateY(-10px);
+}
+
+.benefitCard:hover::before {
+  height: 100%;
 }
 
 .benefitCard h3 {
   color: #007bff;
   margin-bottom: 1rem;
+  font-weight: 600;
+  font-size: 1.3rem;
 }
 
 .benefitCard p {
-  color: #666;
+  color: #555;
+  line-height: 1.6;
 }
 
 @media (max-width: 768px) {
@@ -140,7 +293,28 @@
     font-size: 2.5rem;
   }
 
+  .servicesHero p {
+    font-size: 1.1rem;
+  }
+
   .servicesContent {
-    padding: 2rem 1rem;
+    padding: 3rem 1rem;
+  }
+  
+  .serviceIconWrapper {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .serviceIcon {
+    font-size: 1.7rem;
+  }
+  
+  .whyChooseUs {
+    padding: 3rem 1.5rem;
+  }
+  
+  .whyChooseUs h2 {
+    font-size: 1.8rem;
   }
 }

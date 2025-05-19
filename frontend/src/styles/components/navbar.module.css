@@ -5,6 +5,15 @@
   padding: 1rem 2rem;
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+.scrolled {
+  padding: 0.7rem 2rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .logo a {
@@ -12,6 +21,11 @@
   font-weight: bold;
   color: #333;
   text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.logo a:hover {
+  color: #007bff;
 }
 
 .navLinks {
@@ -23,17 +37,41 @@
 .navLinks a {
   color: #333;
   text-decoration: none;
+  font-weight: 500;
   transition: color 0.3s ease;
+  position: relative;
 }
 
 .navLinks a:hover {
   color: #007bff;
 }
 
+.navLinks a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -4px;
+  left: 0;
+  background-color: #007bff;
+  transition: width 0.3s ease;
+}
+
+.navLinks a:hover::after {
+  width: 100%;
+}
+
+.authButtons {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
 .loginBtn,
 .signupBtn {
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 1.2rem;
   border-radius: 4px;
+  font-weight: 500;
   transition: all 0.3s ease;
 }
 
@@ -45,6 +83,7 @@
 .signupBtn {
   background-color: #007bff;
   color: #fff !important;
+  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
 }
 
 .loginBtn:hover {
@@ -54,4 +93,78 @@
 
 .signupBtn:hover {
   background-color: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4);
+}
+
+/* Hamburger Menu */
+.hamburger {
+  display: none;
+  cursor: pointer;
+  z-index: 100;
+}
+
+.bar {
+  display: block;
+  width: 25px;
+  height: 3px;
+  margin: 5px auto;
+  transition: all 0.3s ease-in-out;
+  background-color: #333;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .hamburger {
+    display: block;
+  }
+
+  .hamburger .bar.active:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+  }
+
+  .hamburger .bar.active:nth-child(2) {
+    opacity: 0;
+  }
+
+  .hamburger .bar.active:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+  }
+
+  .navLinks {
+    position: fixed;
+    left: -100%;
+    top: 0;
+    gap: 0;
+    flex-direction: column;
+    background-color: #fff;
+    width: 100%;
+    height: 100vh;
+    text-align: center;
+    transition: 0.3s;
+    box-shadow: 0 10px 27px rgba(0, 0, 0, 0.05);
+    padding-top: 80px;
+  }
+
+  .navLinks.active {
+    left: 0;
+  }
+
+  .navLinks a {
+    margin: 1.5rem 0;
+    font-size: 1.2rem;
+  }
+
+  .authButtons {
+    flex-direction: column;
+    width: 80%;
+    margin: 1rem auto;
+  }
+
+  .loginBtn, .signupBtn {
+    width: 100%;
+    margin: 0.5rem 0;
+    padding: 0.8rem 0;
+    text-align: center;
+  }
 }

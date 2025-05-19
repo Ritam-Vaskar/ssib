@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 // Import components
 import Navbar from './components/common/Navbar'
 import Footer from './components/common/Footer'
-import Landing from './pages/Landing'
+import Landing from './pages/LandingPage'
 import About from './pages/About'
 import Services from './pages/Services'
 import Login from './components/auth/Login'

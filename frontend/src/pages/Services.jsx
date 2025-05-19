@@ -1,6 +1,7 @@
 import Navbar from '../components/common/Navbar'
 import Footer from '../components/common/Footer'
 import styles from '../styles/pages/services.module.css'
+import { FaShieldAlt, FaUsers, FaHome, FaBuilding } from 'react-icons/fa'
 
 const Services = () => {
   const services = [
@@ -13,7 +14,7 @@ const Services = () => {
         "Regular security reports",
         "Emergency response protocols"
       ],
-      icon: "🛡️"
+      icon: <FaShieldAlt />
     },
     {
       title: "Event Security",
@@ -24,7 +25,7 @@ const Services = () => {
         "Access control systems",
         "Emergency evacuation planning"
       ],
-      icon: "👥"
+      icon: <FaUsers />
     },
     {
       title: "Residential Security",
@@ -35,7 +36,7 @@ const Services = () => {
         "CCTV monitoring",
         "Visitor management"
       ],
-      icon: "🏠"
+      icon: <FaHome />
     },
     {
       title: "Corporate Security",
@@ -46,7 +47,7 @@ const Services = () => {
         "Emergency response",
         "Security consulting"
       ],
-      icon: "🏢"
+      icon: <FaBuilding />
     }
   ]
 
@@ -57,13 +58,16 @@ const Services = () => {
         <div className={styles.servicesHero}>
           <h1>Our Services</h1>
           <p>Professional Security Solutions for Every Need</p>
+          <div className={styles.heroOverlay}></div>
         </div>
         
         <section className={styles.servicesContent}>
           <div className={styles.servicesGrid}>
             {services.map((service, index) => (
               <div key={index} className={styles.serviceCard}>
-                <div className={styles.serviceIcon}>{service.icon}</div>
+                <div className={styles.serviceIconWrapper}>
+                  <div className={styles.serviceIcon}>{service.icon}</div>
+                </div>
                 <h2>{service.title}</h2>
                 <p className={styles.serviceDescription}>{service.description}</p>
                 <ul className={styles.featuresList}>
