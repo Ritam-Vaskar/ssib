@@ -2,8 +2,15 @@ import styles from '../../styles/components/contact.module.css'
 
 const Contact = () => {
   const handleSubmit = (e) => {
-    e.preventDefault()
-    // Form submission logic will be implemented later
+    e.preventDefault();
+    const form = e.target;
+    const name = form[0].value;
+    const email = form[1].value;
+    const subject = form[2].value;
+    const message = form[3].value;
+    const whatsappMessage = `Name: ${name}\nEmail: ${email}\nSubject: ${subject}\nMessage: ${message}`;
+    const whatsappUrl = `https://wa.me/917384860637?text=${encodeURIComponent(whatsappMessage)}`;
+    window.location.href = whatsappUrl;
   }
 
   return (
