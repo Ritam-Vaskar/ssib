@@ -19,12 +19,22 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Enable CORS
+const allowedOrigins = ['https://ssib.vercel.app', 'http://localhost:5173'];
+
 app.use(cors({
-  origin: '*', // Frontend URL (Vite default port)
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true); // allow REST tools or Postman with no origin
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
 
 // Route files
 const auth = require('./routes/authRoutes');
