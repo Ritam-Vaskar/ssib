@@ -1,0 +1,309 @@
+.contactPage {
+  padding-top: 10px;
+  background-color: #f8f9fa;
+}
+
+.hero {
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), url('https://www.anandgroupindia.com/wp-content/uploads/2019/05/contactus.jpg');
+  background-size: cover;
+  background-position: center;
+  color: white;
+  text-align: center;
+  padding: 120px 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, rgba(0, 123, 255, 0.2), rgba(0, 0, 0, 0.4));
+  z-index: 1;
+}
+
+.hero h1 {
+  font-size: 3.5rem;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+  position: relative;
+  z-index: 2;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.hero p {
+  font-size: 1.3rem;
+  max-width: 700px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 20px;
+}
+
+.contactInfo {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  margin-bottom: 70px;
+}
+
+.infoCard {
+  background: white;
+  padding: 35px;
+  border-radius: 15px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  transition: all 0.4s ease;
+  border: 1px solid rgba(0, 123, 255, 0.1);
+}
+
+.infoCard:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 30px rgba(0, 123, 255, 0.1);
+  border-color: rgba(0, 123, 255, 0.3);
+}
+
+.icon {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 25px;
+  color: #007bff;
+  transition: all 0.3s ease;
+}
+
+.infoCard:hover .icon {
+  transform: scale(1.1);
+  color: #0056b3;
+}
+
+.icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.infoCard h3 {
+  margin-bottom: 15px;
+  color: #2d3748;
+  font-weight: 600;
+  font-size: 1.4rem;
+}
+
+.infoCard p {
+  color: #4a5568;
+  margin: 8px 0;
+  line-height: 1.6;
+}
+
+.contactForm {
+  border-radius: 20px;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+  margin-bottom: 70px;
+  background: white;
+  overflow: hidden;
+}
+
+.formContainer {
+  padding: 50px;
+  background: linear-gradient(to right bottom, #ffffff, #f8f9fa);
+}
+
+.formContainer h2 {
+  margin-bottom: 35px;
+  text-align: center;
+  color: #2d3748;
+  font-size: 2.2rem;
+  font-weight: 700;
+}
+
+.formGroup {
+  margin-bottom: 25px;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 10px;
+  color: #4a5568;
+  font-weight: 500;
+  font-size: 1.1rem;
+}
+
+.formGroup input,
+.formGroup textarea {
+  width: 100%;
+  padding: 15px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background-color: #f8f9fa;
+}
+
+.formGroup input:focus,
+.formGroup textarea:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+  background-color: white;
+}
+
+.formGroup textarea {
+  min-height: 150px;
+  resize: vertical;
+}
+
+.submitBtn {
+  background-color: #007bff;
+  color: white;
+  padding: 15px 40px;
+  border: none;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: auto;
+  display: block;
+  margin: 30px auto 0;
+  min-width: 200px;
+}
+
+.submitBtn:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+}
+
+.map {
+  margin-bottom: 70px;
+}
+
+.map h2 {
+  text-align: center;
+  margin-bottom: 35px;
+  color: #2d3748;
+  font-size: 2.2rem;
+  font-weight: 700;
+}
+
+.mapContainer {
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+}
+
+.faq {
+  margin-bottom: 70px;
+  background: white;
+  padding: 50px;
+  border-radius: 20px;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+}
+
+.faq h2 {
+  text-align: center;
+  margin-bottom: 35px;
+  color: #2d3748;
+  font-size: 2.2rem;
+  font-weight: 700;
+}
+
+.faqList {
+  display: grid;
+  gap: 25px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.faqItem {
+  background: #f8f9fa;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.faqItem:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 123, 255, 0.1);
+}
+
+.faqItem h3 {
+  color: #2d3748;
+  margin-bottom: 15px;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.faqItem p {
+  color: #4a5568;
+  line-height: 1.6;
+}
+
+@media (max-width: 992px) {
+  .hero h1 {
+    font-size: 3rem;
+  }
+  
+  .formContainer {
+    padding: 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero h1 {
+    font-size: 2.5rem;
+  }
+
+  .hero p {
+    font-size: 1.1rem;
+  }
+
+  .formContainer {
+    padding: 30px;
+  }
+
+  .contactInfo {
+    grid-template-columns: 1fr;
+  }
+
+  .faq {
+    padding: 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    padding: 80px 20px;
+  }
+
+  .hero h1 {
+    font-size: 2rem;
+  }
+
+  .hero p {
+    font-size: 1rem;
+  }
+
+  .container {
+    padding: 40px 15px;
+  }
+
+  .formContainer,
+  .faq {
+    padding: 25px;
+  }
+
+  .submitBtn {
+    width: 100%;
+    min-width: auto;
+  }
+}
