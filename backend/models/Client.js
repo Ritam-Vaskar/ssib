@@ -14,7 +14,7 @@ const clientSchema = new mongoose.Schema({
   },
   serviceType: {
     type: String,
-    enum: ['residential', 'corporate', 'event', 'personal'],
+    enum: ['FULL_TIME', 'DAY_SHIFT', 'NIGHT_SHIFT', 'EVENT_SECURITY'],
     required: true
   },
   activeAssignments: [{

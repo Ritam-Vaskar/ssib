@@ -55,7 +55,7 @@ export const admin = {
 // Client endpoints
 export const client = {
   getProfile: () => api.get('/client/profile'),
-  requestService: (data) => api.post('/client/request-service', data),
+  submitApplication: (data) => api.post('/client/submit-application', data),
   getBills: () => api.get('/client/bills'),
 };
 

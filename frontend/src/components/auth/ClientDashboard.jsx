@@ -6,10 +6,12 @@ const ClientDashboard = () => {
   const [guardInfo, setGuardInfo] = useState(null)
   const [bills, setBills] = useState([])
   const [applicationForm, setApplicationForm] = useState({
-    serviceType: 'residential',
-    requirements: '',
-    duration: '',
-    location: ''
+    serviceType: 'FULL_TIME',
+    location: '',
+    startDate: '',
+    endDate: '',
+    numberOfGuards: 1,
+    additionalDetails: ''
   })
 
   useEffect(() => {
@@ -41,12 +43,14 @@ const ClientDashboard = () => {
   const handleApplicationSubmit = async (e) => {
     e.preventDefault()
     try {
-      await client.requestService(applicationForm)
+      await client.submitApplication(applicationForm)
       setApplicationForm({
-        serviceType: 'residential',
-        requirements: '',
-        duration: '',
-        location: ''
+        serviceType: 'FULL_TIME',
+        location: '',
+        startDate: '',
+        endDate: '',
+        numberOfGuards: 1,
+        additionalDetails: ''
       })
       alert('Application submitted successfully!')
     } catch (err) {
@@ -113,37 +117,50 @@ const ClientDashboard = () => {
                   })}
                   required
                 >
-                  <option value="residential">Residential Security</option>
-                  <option value="commercial">Commercial Security</option>
-                  <option value="event">Event Security</option>
-                  <option value="personal">Personal Security</option>
+                  <option value="FULL_TIME">24/7 Security</option>
+                  <option value="DAY_SHIFT">Day Shift</option>
+                  <option value="NIGHT_SHIFT">Night Shift</option>
+                  <option value="EVENT_SECURITY">Event Security</option>
                 </select>
               </div>
 
               <div className={styles.formGroup}>
-                <label>Requirements:</label>
-                <textarea
-                  value={applicationForm.requirements}
+                <label>Start Date:</label>
+                <input
+                  type="date"
+                  value={applicationForm.startDate}
                   onChange={(e) => setApplicationForm({
                     ...applicationForm,
-                    requirements: e.target.value
+                    startDate: e.target.value
                   })}
                   required
-                  placeholder="Describe your security requirements..."
                 />
               </div>
 
               <div className={styles.formGroup}>
-                <label>Duration:</label>
+                <label>End Date:</label>
                 <input
-                  type="text"
-                  value={applicationForm.duration}
+                  type="date"
+                  value={applicationForm.endDate}
                   onChange={(e) => setApplicationForm({
                     ...applicationForm,
-                    duration: e.target.value
+                    endDate: e.target.value
                   })}
                   required
-                  placeholder="e.g., 6 months, 1 year"
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>Number of Guards:</label>
+                <input
+                  type="number"
+                  min="1"
+                  value={applicationForm.numberOfGuards}
+                  onChange={(e) => setApplicationForm({
+                    ...applicationForm,
+                    numberOfGuards: parseInt(e.target.value)
+                  })}
+                  required
                 />
               </div>
 
@@ -158,6 +175,18 @@ const ClientDashboard = () => {
                   })}
                   required
                   placeholder="Service location address"
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>Additional Details:</label>
+                <textarea
+                  value={applicationForm.additionalDetails}
+                  onChange={(e) => setApplicationForm({
+                    ...applicationForm,
+                    additionalDetails: e.target.value
+                  })}
+                  placeholder="Any additional requirements or details..."
                 />
               </div>
 

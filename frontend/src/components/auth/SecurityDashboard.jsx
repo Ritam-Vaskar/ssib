@@ -6,6 +6,14 @@ const SecurityDashboard = () => {
   const [activeTab, setActiveTab] = useState('assignments')
   const [assignments, setAssignments] = useState([])
   const [bills, setBills] = useState([])
+  const [applicationForm, setApplicationForm] = useState({
+    experience: '',
+    availability: 'FULL_TIME',
+    preferredLocation: '',
+    skills: '',
+    expectedSalary: '',
+    additionalDetails: ''
+  })
 
   useEffect(() => {
     fetchAssignments()
@@ -56,6 +64,12 @@ const SecurityDashboard = () => {
             onClick={() => setActiveTab('bills')}
           >
             Bills
+          </button>
+          <button
+            className={activeTab === 'apply' ? styles.active : ''}
+            onClick={() => setActiveTab('apply')}
+          >
+            Apply for Job
           </button>
         </nav>
       </div>
@@ -130,9 +144,123 @@ const SecurityDashboard = () => {
             </div>
           </div>
         )}
+
+        {activeTab === 'apply' && (
+          <div className={styles.section}>
+            <h3>Apply for Security Position</h3>
+            <form onSubmit={handleApplicationSubmit} className={styles.form}>
+              <div className={styles.formGroup}>
+                <label>Experience (in years):</label>
+                <input
+                  type="number"
+                  min="0"
+                  value={applicationForm.experience}
+                  onChange={(e) => setApplicationForm({
+                    ...applicationForm,
+                    experience: e.target.value
+                  })}
+                  required
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>Availability:</label>
+                <select
+                  value={applicationForm.availability}
+                  onChange={(e) => setApplicationForm({
+                    ...applicationForm,
+                    availability: e.target.value
+                  })}
+                  required
+                >
+                  <option value="FULL_TIME">Full Time</option>
+                  <option value="DAY_SHIFT">Day Shift</option>
+                  <option value="NIGHT_SHIFT">Night Shift</option>
+                  <option value="EVENT_SECURITY">Event Security</option>
+                </select>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>Preferred Location:</label>
+                <input
+                  type="text"
+                  value={applicationForm.preferredLocation}
+                  onChange={(e) => setApplicationForm({
+                    ...applicationForm,
+                    preferredLocation: e.target.value
+                  })}
+                  required
+                  placeholder="Enter your preferred work location"
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>Skills:</label>
+                <textarea
+                  value={applicationForm.skills}
+                  onChange={(e) => setApplicationForm({
+                    ...applicationForm,
+                    skills: e.target.value
+                  })}
+                  placeholder="List your relevant skills and certifications..."
+                  required
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>Expected Salary (₹):</label>
+                <input
+                  type="number"
+                  min="0"
+                  value={applicationForm.expectedSalary}
+                  onChange={(e) => setApplicationForm({
+                    ...applicationForm,
+                    expectedSalary: e.target.value
+                  })}
+                  required
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>Additional Details:</label>
+                <textarea
+                  value={applicationForm.additionalDetails}
+                  onChange={(e) => setApplicationForm({
+                    ...applicationForm,
+                    additionalDetails: e.target.value
+                  })}
+                  placeholder="Any additional information you'd like to share..."
+                />
+              </div>
+
+              <button type="submit" className={styles.submitButton}>
+                Submit Application
+              </button>
+            </form>
+          </div>
+        )}
       </div>
     </div>
   )
+}
+
+const handleApplicationSubmit = async (e) => {
+  e.preventDefault()
+  try {
+    await security.submitApplication(applicationForm)
+    setApplicationForm({
+      experience: '',
+      availability: 'FULL_TIME',
+      preferredLocation: '',
+      skills: '',
+      expectedSalary: '',
+      additionalDetails: ''
+    })
+    alert('Application submitted successfully!')
+  } catch (err) {
+    console.error('Error submitting application:', err)
+    alert('Error submitting application. Please try again.')
+  }
 }
 
 export default SecurityDashboard
