@@ -335,7 +335,7 @@
   }
 
   .sidebar {
-    width: 100%;
+    width: 99vw;
     height: auto;
     position: relative;
     padding: 1.5rem;
