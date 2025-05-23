@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { useState, useEffect } from 'react'
+import './styles/global.css'
 
 // Import components
 import Navbar from './components/common/Navbar'
@@ -15,6 +16,7 @@ import AdminDashboard from './components/auth/AdminDashboard'
 import ClientDashboard from './components/auth/ClientDashboard'
 import SecurityDashboard from './components/auth/SecurityDashboard'
 import { AuthProvider } from './context/AuthContext'
+import { ToastProvider } from './context/ToastContext'
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const token = localStorage.getItem('token')
@@ -71,12 +73,13 @@ function App() {
 
   return (
     <AuthProvider>
-      <Router>
-        <ScrollToTop />
-        <div className="app">
-          <Navbar isAuthenticated={isAuthenticated} userRole={userRole} />
-          
-          <main className="main-content">
+      <ToastProvider>
+        <Router>
+          <ScrollToTop />
+          <div className="app">
+            <Navbar isAuthenticated={isAuthenticated} userRole={userRole} />
+            
+            <main className="main-content">
             <Routes>
               {/* Public Routes */}
               <Route path="/" element={<Landing />} />
@@ -118,11 +121,12 @@ function App() {
               {/* Fallback Route */}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
-          </main>
+            </main>
 
-          <Footer />
-        </div>
-      </Router>
+            <Footer />
+          </div>
+        </Router>
+      </ToastProvider>
     </AuthProvider>
   )
 }

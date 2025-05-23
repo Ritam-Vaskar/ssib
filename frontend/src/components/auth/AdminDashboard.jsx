@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import styles from '../../styles/components/auth/dashboard.module.css'
 import api from '../../api'
+import LoadingSpinner from '../common/LoadingSpinner'
+import { useToast } from '../../context/ToastContext'
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('guards')
@@ -8,6 +10,8 @@ const AdminDashboard = () => {
   const [clients, setClients] = useState([])
   const [applications, setApplications] = useState([])
   const [securityApplications, setSecurityApplications] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
+  const { showToast } = useToast()
   const [selectedGuard, setSelectedGuard] = useState(null)
   const [selectedClient, setSelectedClient] = useState(null)
   const [billFormData, setBillFormData] = useState({
@@ -26,79 +30,107 @@ const AdminDashboard = () => {
   }, [])
 
   const fetchSecurityApplications = async () => {
+    setIsLoading(true)
     try {
       const response = await api.get('/admin/security-applications')
       setSecurityApplications(Array.isArray(response.data) ? response.data : [response.data])
     } catch (err) {
       console.error('Error fetching security applications:', err)
+      showToast('Failed to fetch security applications', 'error')
+    } finally {
+      setIsLoading(false)
     }
   }
 
   const handleSecurityApplicationResponse = async (applicationId, status) => {
+    setIsLoading(true)
     try {
       await api.post('/admin/security-applications/respond', { applicationId, status })
-      fetchSecurityApplications()
+      await fetchSecurityApplications()
       if (status === 'approved') {
-        fetchGuards()
+        await fetchGuards()
       }
+      showToast(`Application ${status} successfully`, 'success')
     } catch (err) {
       console.error('Error responding to security application:', err)
+      showToast('Failed to respond to application', 'error')
+    } finally {
+      setIsLoading(false)
     }
   }
 
   const fetchGuards = async () => {
+    setIsLoading(true)
     try {
       const response = await api.get('/admin/guards')
-      console.log('Guards response:', response.data)
       setGuards(response.data?.data || [])
     } catch (err) {
       console.error('Error fetching guards:', err)
+      showToast('Failed to fetch guards', 'error')
+    } finally {
+      setIsLoading(false)
     }
   }
 
   const fetchClients = async () => {
+    setIsLoading(true)
     try {
       const response = await api.get('/admin/clients')
-      console.log('Clients response:', response.data)
       setClients(Array.isArray(response.data)? response.data : [response.data])
     } catch (err) {
       console.error('Error fetching clients:', err)
+      showToast('Failed to fetch clients', 'error')
+    } finally {
+      setIsLoading(false)
     }
   }
 
   const fetchApplications = async () => {
+    setIsLoading(true)
     try {
       const response = await api.get('/admin/applications')
-      console.log('Applications response:', response.data)
-      // Ensure applications is always an array
       setApplications(Array.isArray(response.data) ? response.data : [response.data])
     } catch (err) {
       console.error('Error fetching applications:', err)
+      showToast('Failed to fetch applications', 'error')
+    } finally {
+      setIsLoading(false)
     }
   }
 
   const handleAssignGuard = async (clientId, guardId) => {
+    setIsLoading(true)
     try {
       await api.post('/admin/assign-guard', { clientId, guardId })
-      fetchClients()
-      fetchGuards()
+      await fetchClients()
+      await fetchGuards()
       setSelectedClient(null)
+      showToast('Guard assigned successfully', 'success')
     } catch (err) {
       console.error('Error assigning guard:', err)
+      showToast('Failed to assign guard', 'error')
+    } finally {
+      setIsLoading(false)
     }
   }
 
   const handleApplicationResponse = async (applicationId, status) => {
+    setIsLoading(true)
     try {
       await api.post('/admin/accept-application', { applicationId, status })
-      fetchApplications()
+      await fetchApplications()
+      showToast(`Application ${status} successfully`, 'success')
     } catch (err) {
       console.error('Error responding to application:', err)
+      showToast('Failed to respond to application', 'error')
+    } finally {
+      setIsLoading(false)
     }
   }
 
   const handleBillSubmit = async (e, userId) => {
     e.preventDefault()
+    setIsLoading(true)
     try {
       await api.post('/admin/generate-bill', { userId, ...billFormData })
       setBillFormData({
@@ -108,13 +140,18 @@ const AdminDashboard = () => {
         driveLink: ''
       })
       setSelectedGuard(null)
+      showToast('Bill generated successfully', 'success')
     } catch (err) {
       console.error('Error generating bill:', err)
+      showToast('Failed to generate bill', 'error')
+    } finally {
+      setIsLoading(false)
     }
   }
 
   return (
     <div className={styles.dashboard}>
+      {isLoading && <LoadingSpinner />}
       <div className={styles.sidebar}>
         <h2>Admin Dashboard</h2>
         <nav>

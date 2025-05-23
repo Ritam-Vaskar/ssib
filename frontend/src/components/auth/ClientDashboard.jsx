@@ -1,10 +1,14 @@
 import { useState, useEffect } from 'react'
 import styles from '../../styles/components/auth/dashboard.module.css'
 import { client } from '../../api'
+import LoadingSpinner from '../common/LoadingSpinner'
+import { useToast } from '../../context/ToastContext'
 const ClientDashboard = () => {
   const [activeTab, setActiveTab] = useState('status')
   const [guardInfo, setGuardInfo] = useState(null)
   const [bills, setBills] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
+  const { showToast } = useToast()
   const [applicationForm, setApplicationForm] = useState({
     serviceType: 'FULL_TIME',
     location: '',
@@ -20,21 +24,29 @@ const ClientDashboard = () => {
   }, [])
 
   const fetchGuardInfo = async () => {
+    setIsLoading(true)
     try {
       const response = await client.getProfile()
       setGuardInfo(response.data.assignedGuard || null)
     } catch (err) {
       console.error('Error fetching guard info:', err)
+      showToast('Failed to fetch guard information', 'error')
+    } finally {
+      setIsLoading(false)
     }
   }
   
 
   const fetchBills = async () => {
+    setIsLoading(true)
     try {
       const response = await client.getBills()
       setBills(response.data)
     } catch (err) {
       console.error('Error fetching bills:', err)
+      showToast('Failed to fetch bills', 'error')
+    } finally {
+      setIsLoading(false)
     }
   }
   
@@ -42,6 +54,7 @@ const ClientDashboard = () => {
 
   const handleApplicationSubmit = async (e) => {
     e.preventDefault()
+    setIsLoading(true)
     try {
       await client.submitApplication(applicationForm)
       setApplicationForm({
@@ -52,15 +65,19 @@ const ClientDashboard = () => {
         numberOfGuards: 1,
         additionalDetails: ''
       })
-      alert('Application submitted successfully!')
+      showToast('Application submitted successfully!', 'success')
     } catch (err) {
       console.error('Error submitting application:', err)
+      showToast('Failed to submit application', 'error')
+    } finally {
+      setIsLoading(false)
     }
   }
   
 
   return (
     <div className={styles.dashboard}>
+      {isLoading && <LoadingSpinner />}
       <div className={styles.sidebar}>
         <h2>Client Dashboard</h2>
         <nav>

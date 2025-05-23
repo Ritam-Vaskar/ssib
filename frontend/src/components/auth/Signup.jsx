@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from '../../styles/components/auth/signup.module.css'
 import { auth } from '../../api'
+import Toast from '../common/Toast'
+import LoadingSpinner from '../common/LoadingSpinner'
 
 const Signup = () => {
   const navigate = useNavigate()
@@ -14,6 +16,10 @@ const Signup = () => {
     phone: ''
   })
   const [error, setError] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [showToast, setShowToast] = useState(false)
+  const [toastMessage, setToastMessage] = useState('')
+  const [toastType, setToastType] = useState('success')
 
   const handleChange = (e) => {
     setFormData({
@@ -24,10 +30,16 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    setIsLoading(true)
+    setError('')
     
     // Basic validation
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match')
+      setToastMessage('Passwords do not match')
+      setToastType('error')
+      setShowToast(true)
+      setIsLoading(false)
       return
     }
 
@@ -37,15 +49,28 @@ const Signup = () => {
       sessionStorage.setItem('verificationEmail', formData.email)
       navigate('/otp-verification')
     } catch (err) {
-      setError(err.message || 'Something went wrong. Please try again.')
+      const errorMsg = err.message || 'Something went wrong. Please try again.'
+      setError(errorMsg)
+      setToastMessage(errorMsg)
+      setToastType('error')
+      setShowToast(true)
+    } finally {
+      setIsLoading(false)
     }
   }
 
   return (
     <div className={styles.signupContainer}>
+      {isLoading && <LoadingSpinner />}
+      {showToast && (
+        <Toast
+          message={toastMessage}
+          type={toastType}
+          onClose={() => setShowToast(false)}
+        />
+      )}
       <div className={styles.signupBox}>
         <h2>Create Account</h2>
-        {error && <p className={styles.error}>{error}</p>}
         
         <form onSubmit={handleSubmit} className={styles.signupForm}>
           <div className={styles.formGroup}>

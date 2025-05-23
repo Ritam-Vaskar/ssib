@@ -186,19 +186,26 @@
   }
 
   .navLinks a {
-    margin: 1.5rem 0;
+    margin: 1rem 0;
     font-size: 1.2rem;
   }
 
   .authButtons {
     flex-direction: column;
-    width: 80%;
-    margin: 1rem auto;
+    width: 30%;
+    margin: 0.5rem auto;
+    gap: 0;
   }
 
-  .loginBtn, .signupBtn {
+  .loginBtn{
     width: 100%;
-    margin: 0.5rem 0;
+    /* margin: 0.5rem 0; */
+    padding: 0.8rem 0;
+    text-align: center;
+  }
+  .signupBtn {
+    width: 100%;
+    margin: -0.8rem 0;
     padding: 0.8rem 0;
     text-align: center;
   }

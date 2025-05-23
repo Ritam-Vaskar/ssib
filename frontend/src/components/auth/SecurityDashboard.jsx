@@ -1,11 +1,15 @@
 import { useState, useEffect } from 'react'
 import styles from '../../styles/components/auth/dashboard.module.css'
 import api, { security } from '../../api'
+import LoadingSpinner from '../common/LoadingSpinner'
+import { useToast } from '../../context/ToastContext'
 
 const SecurityDashboard = () => {
   const [activeTab, setActiveTab] = useState('assignments')
   const [assignments, setAssignments] = useState([])
   const [bills, setBills] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
+  const { showToast } = useToast()
   const [applicationForm, setApplicationForm] = useState({
     experience: '',
     availability: 'FULL_TIME',
@@ -21,35 +25,49 @@ const SecurityDashboard = () => {
   }, [])
 
   const fetchAssignments = async () => {
+    setIsLoading(true)
     try {
       const response = await api.get('/security/assignments')
       setAssignments(response.data)
     } catch (err) {
       console.error('Error fetching assignments:', err)
+      showToast('Failed to fetch assignments', 'error')
+    } finally {
+      setIsLoading(false)
     }
   }
 
   const fetchBills = async () => {
+    setIsLoading(true)
     try {
       const response = await api.get('/security/bills')
       setBills(response.data)
     } catch (err) {
       console.error('Error fetching bills:', err)
+      showToast('Failed to fetch bills', 'error')
+    } finally {
+      setIsLoading(false)
     }
   }
 
   const updateAssignmentStatus = async (assignmentId, status) => {
+    setIsLoading(true)
     try {
       const payload = { assignmentId, status }
       await security.updateAssignmentStatus(payload)
-      fetchAssignments()
+      await fetchAssignments()
+      showToast('Status updated successfully', 'success')
     } catch (err) {
       console.error('Error updating status:', err)
+      showToast('Failed to update status', 'error')
+    } finally {
+      setIsLoading(false)
     }
   }
 
   return (
     <div className={styles.dashboard}>
+      {isLoading && <LoadingSpinner />}
       <div className={styles.sidebar}>
         <h2>Security Dashboard</h2>
         <nav>

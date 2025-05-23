@@ -2,6 +2,8 @@ import { useState, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from '../../styles/components/auth/login.module.css'
 import { auth } from '../../api'
+import Toast from '../common/Toast'
+import LoadingSpinner from '../common/LoadingSpinner'
 
 const Login = () => {
   const navigate = useNavigate()
@@ -12,6 +14,9 @@ const Login = () => {
   })
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [showToast, setShowToast] = useState(false)
+  const [toastMessage, setToastMessage] = useState('')
+  const [toastType, setToastType] = useState('success')
 
   const handleChange = (e) => {
     setFormData({
@@ -41,6 +46,9 @@ const Login = () => {
       console.error('Login error:', err)
       const errorMsg = err.response?.data?.message || 'Login failed. Please check your credentials.'
       setError(errorMsg)
+      setToastMessage(errorMsg)
+      setToastType('error')
+      setShowToast(true)
       
       // Display more detailed error for debugging
       // if (errorMsg === 'Invalid credentials') {
@@ -69,9 +77,16 @@ const Login = () => {
 
   return (
     <div className={styles.loginContainer}>
+      {isLoading && <LoadingSpinner />}
+      {showToast && (
+        <Toast
+          message={toastMessage}
+          type={toastType}
+          onClose={() => setShowToast(false)}
+        />
+      )}
       <div className={styles.loginBox}>
         <h2>Login to SSIB Service</h2>
-        {error && <p className={styles.error}>{error}</p>}
         
         <form onSubmit={handleSubmit} className={styles.loginForm}>
           <div className={styles.formGroup}>
