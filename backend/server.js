@@ -20,7 +20,7 @@ app.use(cookieParser());
 
 // Enable CORS
 app.use(cors({
-  origin: 'http://localhost:5173', // Frontend URL (Vite default port)
+  origin: '*', // Frontend URL (Vite default port)
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
