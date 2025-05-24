@@ -151,17 +151,18 @@ const AdminDashboard = () => {
     try {
       setIsLoading(true);
       const response = await admin.getAllClients();
-  
-      const clientsWithAssignments = Array.isArray(response.data)
-        ? response.data.map((client) => {
-            // Directly use the activeAssignments data, no need to re-fetch
-            return {
-              ...client,
-              activeAssignments: client.activeAssignments || [],
-            };
-          })
+      
+      // Check if response.data exists and has the data property
+      const clientData = response.data?.data || [];
+      
+      const clientsWithAssignments = Array.isArray(clientData)
+        ? clientData.map((client) => ({
+            ...client,
+            activeAssignments: client.activeAssignments || []
+          }))
         : [];
-  
+
+      console.log('Processed clients:', clientsWithAssignments); // Debug log
       setClients(clientsWithAssignments);
     } catch (error) {
       console.error('Error fetching clients:', error);
