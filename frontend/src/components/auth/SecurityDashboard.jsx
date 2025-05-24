@@ -11,11 +11,14 @@ const SecurityDashboard = () => {
   const [isLoading, setIsLoading] = useState(false)
   const { showToast } = useToast()
   const [applicationForm, setApplicationForm] = useState({
+    fullName: '',
+    dateOfBirth: '',
+    address: '',
+    phoneNumber: '',
     experience: '',
-    availability: 'FULL_TIME',
-    preferredLocation: '',
-    skills: '',
-    expectedSalary: '',
+    qualifications: '',
+    previousEmployer: '',
+    documents: [],
     additionalDetails: ''
   })
 
@@ -60,6 +63,33 @@ const SecurityDashboard = () => {
     } catch (err) {
       console.error('Error updating status:', err)
       showToast('Failed to update status', 'error')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleApplicationSubmit = async (e) => {
+    e.preventDefault()
+    setIsLoading(true)
+    try {
+      const response = await api.post('/security/application/submit', applicationForm)
+      if (response.data.success) {
+        showToast('Application submitted successfully!', 'success')
+        setApplicationForm({
+          fullName: '',
+          dateOfBirth: '',
+          address: '',
+          phoneNumber: '',
+          experience: '',
+          qualifications: '',
+          previousEmployer: '',
+          documents: [],
+          additionalDetails: ''
+        })
+      }
+    } catch (err) {
+      console.error('Error submitting application:', err)
+      showToast(err.response?.data?.message || 'Error submitting application. Please try again.', 'error')
     } finally {
       setIsLoading(false)
     }
@@ -168,6 +198,57 @@ const SecurityDashboard = () => {
             <h3>Apply for Security Position</h3>
             <form onSubmit={handleApplicationSubmit} className={styles.form}>
               <div className={styles.formGroup}>
+                <label>Full Name:</label>
+                <input
+                  type="text"
+                  value={applicationForm.fullName}
+                  onChange={(e) => setApplicationForm({
+                    ...applicationForm,
+                    fullName: e.target.value
+                  })}
+                  required
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>Date of Birth:</label>
+                <input
+                  type="date"
+                  value={applicationForm.dateOfBirth}
+                  onChange={(e) => setApplicationForm({
+                    ...applicationForm,
+                    dateOfBirth: e.target.value
+                  })}
+                  required
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>Address:</label>
+                <textarea
+                  value={applicationForm.address}
+                  onChange={(e) => setApplicationForm({
+                    ...applicationForm,
+                    address: e.target.value
+                  })}
+                  required
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>Phone Number:</label>
+                <input
+                  type="tel"
+                  value={applicationForm.phoneNumber}
+                  onChange={(e) => setApplicationForm({
+                    ...applicationForm,
+                    phoneNumber: e.target.value
+                  })}
+                  required
+                />
+              </div>
+
+              <div className={styles.formGroup}>
                 <label>Experience (in years):</label>
                 <input
                   type="number"
@@ -175,67 +256,35 @@ const SecurityDashboard = () => {
                   value={applicationForm.experience}
                   onChange={(e) => setApplicationForm({
                     ...applicationForm,
-                    experience: e.target.value
+                    experience: Number(e.target.value)
                   })}
                   required
                 />
               </div>
 
               <div className={styles.formGroup}>
-                <label>Availability:</label>
-                <select
-                  value={applicationForm.availability}
+                <label>Qualifications:</label>
+                <textarea
+                  value={applicationForm.qualifications}
                   onChange={(e) => setApplicationForm({
                     ...applicationForm,
-                    availability: e.target.value
+                    qualifications: e.target.value
                   })}
+                  placeholder="List your educational qualifications and certifications..."
                   required
-                >
-                  <option value="FULL_TIME">Full Time</option>
-                  <option value="DAY_SHIFT">Day Shift</option>
-                  <option value="NIGHT_SHIFT">Night Shift</option>
-                  <option value="EVENT_SECURITY">Event Security</option>
-                </select>
+                />
               </div>
 
               <div className={styles.formGroup}>
-                <label>Preferred Location:</label>
+                <label>Previous Employer:</label>
                 <input
                   type="text"
-                  value={applicationForm.preferredLocation}
+                  value={applicationForm.previousEmployer}
                   onChange={(e) => setApplicationForm({
                     ...applicationForm,
-                    preferredLocation: e.target.value
+                    previousEmployer: e.target.value
                   })}
-                  required
-                  placeholder="Enter your preferred work location"
-                />
-              </div>
-
-              <div className={styles.formGroup}>
-                <label>Skills:</label>
-                <textarea
-                  value={applicationForm.skills}
-                  onChange={(e) => setApplicationForm({
-                    ...applicationForm,
-                    skills: e.target.value
-                  })}
-                  placeholder="List your relevant skills and certifications..."
-                  required
-                />
-              </div>
-
-              <div className={styles.formGroup}>
-                <label>Expected Salary (₹):</label>
-                <input
-                  type="number"
-                  min="0"
-                  value={applicationForm.expectedSalary}
-                  onChange={(e) => setApplicationForm({
-                    ...applicationForm,
-                    expectedSalary: e.target.value
-                  })}
-                  required
+                  placeholder="Enter your previous employer's name"
                 />
               </div>
 
@@ -251,8 +300,8 @@ const SecurityDashboard = () => {
                 />
               </div>
 
-              <button type="submit" className={styles.submitButton}>
-                Submit Application
+              <button type="submit" className={styles.submitButton} disabled={isLoading}>
+                {isLoading ? 'Submitting...' : 'Submit Application'}
               </button>
             </form>
           </div>
@@ -260,25 +309,6 @@ const SecurityDashboard = () => {
       </div>
     </div>
   )
-}
-
-const handleApplicationSubmit = async (e) => {
-  e.preventDefault()
-  try {
-    await security.submitApplication(applicationForm)
-    setApplicationForm({
-      experience: '',
-      availability: 'FULL_TIME',
-      preferredLocation: '',
-      skills: '',
-      expectedSalary: '',
-      additionalDetails: ''
-    })
-    alert('Application submitted successfully!')
-  } catch (err) {
-    console.error('Error submitting application:', err)
-    alert('Error submitting application. Please try again.')
-  }
 }
 
 export default SecurityDashboard

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import styles from '../../styles/components/auth/dashboard.module.css'
-import api from '../../api'
+import api, { admin } from '../../api'
 import LoadingSpinner from '../common/LoadingSpinner'
 import { useToast } from '../../context/ToastContext'
 
@@ -14,6 +14,9 @@ const AdminDashboard = () => {
   const { showToast } = useToast()
   const [selectedGuard, setSelectedGuard] = useState(null)
   const [selectedClient, setSelectedClient] = useState(null)
+  const [showAssignModal, setShowAssignModal] = useState(false)
+  const [selectedGuards, setSelectedGuards] = useState([])
+
   const [billFormData, setBillFormData] = useState({
     amount: '',
     dueDate: '',
@@ -21,9 +24,43 @@ const AdminDashboard = () => {
     driveLink: ''
   })
 
+  const fetchAvailableGuards = async () => {
+    try {
+      setIsLoading(true)
+      const response = await admin.getAllGuards()
+      const availableGuards = response.data.data.filter(guard => guard.status === 'available')
+      setGuards(availableGuards)
+    } catch (error) {
+      showToast('Error fetching guards: ' + error.message, 'error')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  
+
+  const handleAssignmentFormChange = (e) => {
+    const { name, value } = e.target
+    if (name.startsWith('location.')) {
+      const locationField = name.split('.')[1]
+      setAssignmentForm(prev => ({
+        ...prev,
+        location: {
+          ...prev.location,
+          [locationField]: value
+        }
+      }))
+    } else {
+      setAssignmentForm(prev => ({
+        ...prev,
+        [name]: value
+      }))
+    }
+  }
+
   useEffect(() => {
     // Fetch initial data
-    fetchGuards()
+    fetchAvailableGuards()
     fetchClients()
     fetchApplications()
     fetchSecurityApplications()
@@ -33,10 +70,38 @@ const AdminDashboard = () => {
     setIsLoading(true)
     try {
       const response = await api.get('/admin/security-applications')
-      setSecurityApplications(Array.isArray(response.data) ? response.data : [response.data])
+      setSecurityApplications(response.data.data)
     } catch (err) {
       console.error('Error fetching security applications:', err)
       showToast('Failed to fetch security applications', 'error')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleAcceptSecurityApplication = async (applicationId) => {
+    setIsLoading(true)
+    try {
+      await api.post('/admin/accept-security-application', { applicationId })
+      showToast('Application accepted successfully', 'success')
+      fetchSecurityApplications()
+    } catch (err) {
+      console.error('Error accepting application:', err)
+      showToast('Failed to accept application', 'error')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleRejectSecurityApplication = async (applicationId) => {
+    setIsLoading(true)
+    try {
+      await api.post('/admin/reject-security-application', { applicationId })
+      showToast('Application rejected successfully', 'success')
+      fetchSecurityApplications()
+    } catch (err) {
+      console.error('Error rejecting application:', err)
+      showToast('Failed to reject application', 'error')
     } finally {
       setIsLoading(false)
     }
@@ -63,7 +128,17 @@ const AdminDashboard = () => {
     setIsLoading(true)
     try {
       const response = await api.get('/admin/guards')
-      setGuards(response.data?.data || [])
+      setGuards(Array.isArray(response.data) ? response.data.map(guard => ({
+          _id: guard._id,
+          name: guard.user.name,
+          email: guard.user.email,
+          status: guard.status,
+          experience: guard.experience,
+          specialization: guard.specialization,
+          currentAssignment: guard.currentAssignment,
+          rating: guard.rating,
+          reviews: guard.reviews
+        })) : [response.data]);
     } catch (err) {
       console.error('Error fetching guards:', err)
       showToast('Failed to fetch guards', 'error')
@@ -73,17 +148,29 @@ const AdminDashboard = () => {
   }
 
   const fetchClients = async () => {
-    setIsLoading(true)
     try {
-      const response = await api.get('/admin/clients')
-      setClients(Array.isArray(response.data)? response.data : [response.data])
-    } catch (err) {
-      console.error('Error fetching clients:', err)
-      showToast('Failed to fetch clients', 'error')
+      setIsLoading(true);
+      const response = await admin.getAllClients();
+  
+      const clientsWithAssignments = Array.isArray(response.data)
+        ? response.data.map((client) => {
+            // Directly use the activeAssignments data, no need to re-fetch
+            return {
+              ...client,
+              activeAssignments: client.activeAssignments || [],
+            };
+          })
+        : [];
+  
+      setClients(clientsWithAssignments);
+    } catch (error) {
+      console.error('Error fetching clients:', error);
+      showToast('Error fetching clients: ' + error.message, 'error');
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
+  
 
   const fetchApplications = async () => {
     setIsLoading(true)
@@ -101,7 +188,7 @@ const AdminDashboard = () => {
   const handleAssignGuard = async (clientId, guardId) => {
     setIsLoading(true)
     try {
-      await api.post('/admin/assign-guard', { clientId, guardId })
+      await admin.assignGuard({ clientId, guardId })
       await fetchClients()
       await fetchGuards()
       setSelectedClient(null)
@@ -109,6 +196,21 @@ const AdminDashboard = () => {
     } catch (err) {
       console.error('Error assigning guard:', err)
       showToast('Failed to assign guard', 'error')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleWithdrawGuard = async (clientId, guardId) => {
+    setIsLoading(true)
+    try {
+      await admin.withdrawGuard({ clientId, guardId })
+      await fetchClients()
+      await fetchGuards()
+      showToast('Guard withdrawn successfully', 'success')
+    } catch (err) {
+      console.error('Error withdrawing guard:', err)
+      showToast('Failed to withdraw guard', 'error')
     } finally {
       setIsLoading(false)
     }
@@ -177,20 +279,185 @@ const AdminDashboard = () => {
             className={activeTab === 'security-applications' ? styles.active : ''}
             onClick={() => setActiveTab('security-applications')}
           >
-            Guard Applications
+            Security Applications
           </button>
         </nav>
       </div>
 
       <div className={styles.content}>
+        {activeTab === 'security-applications' && (
+          <div className={styles.section}>
+            <h3>Security Guard Applications</h3>
+            <div className={styles.list}>
+              {securityApplications.map(application => (
+                <div key={application._id} className={styles.card}>
+                  <div className={styles.cardHeader}>
+                    <h4>{application.fullName}</h4>
+                    <span className={styles[application.status]}>
+                      {application.status}
+                    </span>
+                  </div>
+                  <p>Email: {application.user.email}</p>
+                  <p>Phone: {application.phoneNumber}</p>
+                  <p>Experience: {application.experience} years</p>
+                  <p>Qualifications: {application.qualifications}</p>
+                  {application.previousEmployer && (
+                    <p>Previous Employer: {application.previousEmployer}</p>
+                  )}
+                  <div className={styles.actions}>
+                    {application.status === 'pending' && (
+                      <>
+                        <button
+                          onClick={() => handleAcceptSecurityApplication(application._id)}
+                          className={styles.acceptButton}
+                        >
+                          Accept
+                        </button>
+                        <button
+                          onClick={() => handleRejectSecurityApplication(application._id)}
+                          className={styles.rejectButton}
+                        >
+                          Reject
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         {/* Guards Tab */}
+        {activeTab === 'assignments' && (
+          <div className={styles.section}>
+            <h2>Assign Guards to Clients</h2>
+            {isLoading ? (
+              <LoadingSpinner />
+            ) : (
+              <div className={styles.assignmentContainer}>
+                <form onSubmit={handleAssignmentSubmit} className={styles.assignmentForm}>
+                  <div className={styles.formGroup}>
+                    <label>Select Guard:</label>
+                    <select
+                      name="guardId"
+                      value={assignmentForm.guardId}
+                      onChange={handleAssignmentFormChange}
+                      required
+                    >
+                      <option value="">Select a guard</option>
+                      {guards.map((guard) => (
+                        <option key={guard._id} value={guard._id}>
+                          {guard.user.name} - {guard.experience} years exp.
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label>Select Client:</label>
+                    <select
+                      name="clientId"
+                      value={assignmentForm.clientId}
+                      onChange={handleAssignmentFormChange}
+                      required
+                    >
+                      <option value="">Select a client</option>
+                      {clients.map((client) => (
+                        <option key={client._id} value={client._id}>
+                          {client.user.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label>Start Date:</label>
+                    <input
+                      type="date"
+                      name="startDate"
+                      value={assignmentForm.startDate}
+                      onChange={handleAssignmentFormChange}
+                      required
+                    />
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label>End Date:</label>
+                    <input
+                      type="date"
+                      name="endDate"
+                      value={assignmentForm.endDate}
+                      onChange={handleAssignmentFormChange}
+                      required
+                    />
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label>Shift:</label>
+                    <select
+                      name="shift"
+                      value={assignmentForm.shift}
+                      onChange={handleAssignmentFormChange}
+                      required
+                    >
+                      <option value="day">Day Shift</option>
+                      <option value="night">Night Shift</option>
+                      <option value="24h">24 Hours</option>
+                    </select>
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label>Location:</label>
+                    <input
+                      type="text"
+                      name="location.street"
+                      placeholder="Street"
+                      value={assignmentForm.location.street}
+                      onChange={handleAssignmentFormChange}
+                      required
+                    />
+                    <input
+                      type="text"
+                      name="location.city"
+                      placeholder="City"
+                      value={assignmentForm.location.city}
+                      onChange={handleAssignmentFormChange}
+                      required
+                    />
+                    <input
+                      type="text"
+                      name="location.state"
+                      placeholder="State"
+                      value={assignmentForm.location.state}
+                      onChange={handleAssignmentFormChange}
+                      required
+                    />
+                    <input
+                      type="text"
+                      name="location.zipCode"
+                      placeholder="ZIP Code"
+                      value={assignmentForm.location.zipCode}
+                      onChange={handleAssignmentFormChange}
+                      required
+                    />
+                  </div>
+
+                  <button type="submit" className={styles.submitButton} disabled={isLoading}>
+                    {isLoading ? 'Assigning...' : 'Assign Guard'}
+                  </button>
+                </form>
+              </div>
+            )}
+          </div>
+        )}
+
         {activeTab === 'guards' && (
           <div className={styles.section}>
             <h3>Security Guards</h3>
             <div className={styles.list}>
               {guards.map(guard => (
                 <div key={guard._id} className={styles.card}>
-                  <h4>{guard.name}</h4>
+                  <h4>{guard?.user?.name}</h4>
                   <p>Email: {guard.email}</p>
                   <p>Status: {guard.status}</p>
                   <button onClick={() => setSelectedGuard(guard)}>
@@ -269,50 +536,89 @@ const AdminDashboard = () => {
         )}
 
         {/* Clients Tab */}
-{activeTab === 'clients' && (
+        {activeTab === 'clients' && (
   <div className={styles.section}>
     <h3>Clients</h3>
-    <div className={styles.list}>
-      {clients.map(client => (
-        <div key={client._id} className={styles.card}>
-          <h4>{client.user.name}</h4>
-          <p>Email: {client.user.email}</p>
-          <p>Service Type: {client.serviceType}</p>
-          <p>Status: {client.status || 'Unassigned'}</p>
-          <button onClick={() => setSelectedClient(client)}>
-            Assign Guard
-          </button>
-        </div>
-      ))}
-    </div>
 
-    {selectedClient && (
+    {isLoading ? (
+      <p>Loading clients...</p>
+    ) : clients.length === 0 ? (
+      <p>No clients found.</p>
+    ) : (
+      <div className={styles.list}>
+        {clients.map(client => (
+          <div key={client._id} className={styles.card}>
+            <h4>{client?.user?.name || 'No Name'}</h4>
+            <p>Email: {client?.user?.email || 'N/A'}</p>
+            <p>Service Type: {client?.serviceType || 'N/A'}</p>
+            <p>Status: {client?.status || 'Unassigned'}</p>
+
+            {client?.activeAssignments?.length > 0 ? (
+              <div className={styles.assignmentInfo}>
+                <h4>Active Assignments</h4>
+                {client.activeAssignments.map((assignment) => (
+                  <div key={assignment._id} className={styles.assignmentDetails}>
+                    <p><strong>Guard Name:</strong> {assignment?.guard?.user?.name || 'N/A'}</p>
+                    <p><strong>Guard Phone:</strong> {assignment?.guard?.phoneNumber || 'N/A'}</p>
+                    <p><strong>Location:</strong> {assignment?.location?.street || 'N/A'}, {assignment?.location?.city || ''}</p>
+                    <p><strong>Shift:</strong> {assignment?.shift || 'N/A'}</p>
+                    <p><strong>Start Date:</strong> {assignment?.startDate ? new Date(assignment.startDate).toLocaleDateString() : 'N/A'}</p>
+                    <p><strong>End Date:</strong> {assignment?.endDate ? new Date(assignment.endDate).toLocaleDateString() : 'Ongoing'}</p>
+                    <button
+                      className={styles.withdrawButton}
+                      onClick={() => handleWithdrawGuard(client._id, assignment?.guard?._id)}
+                    >
+                      Withdraw Guard
+                    </button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <button
+                onClick={() => {
+                  setSelectedClient(client);
+                  setShowAssignModal(true);
+                }}
+              >
+                Assign Guard
+              </button>
+            )}
+          </div>
+        ))}
+      </div>
+    )}
+
+    {selectedClient && showAssignModal && (
       <div className={styles.modal}>
         <div className={styles.modalContent}>
-          <h3>Assign Guard to {selectedClient.name}</h3>
+          <h3>Assign Guard to {selectedClient?.user?.name || 'Client'}</h3>
           <div className={styles.guardList}>
-            {guards
-              .filter(guard => guard.status === 'available')
-              .map(guard => (
-                <div key={guard._id} className={styles.guardCard}>
-                  <h4>{guard.name}</h4>
-                  <p>Experience: {guard.experience}</p>
-                  <button
-                    onClick={() => {
-                      handleAssignGuard(selectedClient._id, guard._id)
-                    }}
-                  >
-                    Assign
-                  </button>
-                </div>
-              ))}
-            {guards.filter(guard => guard.status === 'available').length === 0 && (
+            {guards.filter(guard => guard.status === 'available').length === 0 ? (
               <p>No available guards to assign.</p>
+            ) : (
+              guards
+                .filter(guard => guard.status === 'available')
+                .map(guard => (
+                  <div key={guard._id} className={styles.guardCard}>
+                    <h4>{guard?.name || 'N/A'}</h4>
+                    <p>Experience: {guard?.experience || 'N/A'}</p>
+                    <button
+                      onClick={() => {
+                        handleAssignGuard(selectedClient._id, guard._id);
+                      }}
+                    >
+                      Assign
+                    </button>
+                  </div>
+                ))
             )}
           </div>
           <button
             className={styles.closeButton}
-            onClick={() => setSelectedClient(null)}
+            onClick={() => {
+              setSelectedClient(null);
+              setShowAssignModal(false);
+            }}
           >
             Close
           </button>
@@ -321,6 +627,7 @@ const AdminDashboard = () => {
     )}
   </div>
 )}
+
 
 
         {/* Client Applications Tab */}

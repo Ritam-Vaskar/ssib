@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+
 const API_BASE_URL = `${import.meta.env.VITE_APP_API_URL || 'http://localhost:5000'}/api`;
 
 const api = axios.create({
@@ -50,6 +51,9 @@ export const admin = {
   getAllGuards: () => api.get('/admin/guards'),
   assignGuard: (data) => api.post('/admin/assign-guard', data),
   generateBill: (data) => api.post('/admin/generate-bill', data),
+  getAllClients: () => api.get('/admin/clients'),
+  withdrawGuard: (data) => api.post('/admin/withdraw-guard', data),
+  getAssignmentDetails: (id) => api.get(`/admin/assignments/${id}`),
 };
 
 // Client endpoints
@@ -57,6 +61,7 @@ export const client = {
   getProfile: () => api.get('/client/profile'),
   submitApplication: (data) => api.post('/client/submit-application', data),
   getBills: () => api.get('/client/bills'),
+
 };
 
 // Security endpoints

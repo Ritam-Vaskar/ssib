@@ -74,8 +74,85 @@ exports.generateBill = async (req, res) => {
 // Get all clients
 exports.getAllClients = async (req, res) => {
   try {
-    const clients = await Client.find().populate('user', 'name email');
-    res.status(200).json(clients);
+    const clients = await Client.find()
+      .populate('user', 'name email')
+      .populate({
+        path: 'activeAssignments',
+        populate: [
+          {
+            path: 'guard',
+            populate: {
+              path: 'user',
+              select: 'name email'
+            }
+          }
+        ]
+      });
+    res.status(200).json({ success: true, data: clients });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Withdraw guard from assignment
+exports.withdrawGuard = async (req, res) => {
+  try {
+    const { assignmentId } = req.body;
+
+    const assignment = await Assignment.findById(assignmentId);
+    if (!assignment) {
+      return res.status(404).json({ success: false, message: 'Assignment not found' });
+    }
+
+    // Get guard ID before updating assignment
+    const guardId = assignment.guard;
+
+    // Update assignment status
+    assignment.status = 'completed';
+    assignment.endDate = new Date();
+    await assignment.save();
+
+    // Update guard status
+    await SecurityGuard.findByIdAndUpdate(guardId, {
+      status: 'available',
+      currentAssignment: null
+    });
+
+    // Remove assignment from client's active assignments
+    await Client.findByIdAndUpdate(assignment.client, {
+      $pull: { activeAssignments: assignmentId }
+    });
+
+    res.status(200).json({ success: true, message: 'Guard withdrawn successfully' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Get assignment details
+exports.getAssignmentDetails = async (req, res) => {
+  try {
+    const assignment = await Assignment.findById(req.params.id)
+      .populate({
+        path: 'guard',
+        populate: {
+          path: 'user',
+          select: 'name email'
+        }
+      })
+      .populate({
+        path: 'client',
+        populate: {
+          path: 'user',
+          select: 'name email'
+        }
+      });
+
+    if (!assignment) {
+      return res.status(404).json({ success: false, message: 'Assignment not found' });
+    }
+
+    res.status(200).json({ success: true, data: assignment });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -193,6 +270,56 @@ exports.acceptApplication = async (req, res) => {
     });
   } catch (error) {
     console.error('Error in acceptApplication:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Accept security application
+exports.acceptSecurityApplication = async (req, res) => {
+  try {
+    const { applicationId } = req.body;
+
+    const application = await SecurityApplication.findById(applicationId);
+    if (!application) {
+      return res.status(404).json({ success: false, message: 'Application not found' });
+    }
+
+    // Update application status
+    application.status = 'approved';
+    application.updatedAt = Date.now();
+    await application.save();
+
+    // Create security guard entry
+    await SecurityGuard.create({
+      user: application.user,
+      status: 'available',
+      experience: application.experience,
+      qualifications: application.qualifications
+    });
+
+    res.status(200).json({ success: true, message: 'Application approved successfully' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Reject security application
+exports.rejectSecurityApplication = async (req, res) => {
+  try {
+    const { applicationId } = req.body;
+
+    const application = await SecurityApplication.findById(applicationId);
+    if (!application) {
+      return res.status(404).json({ success: false, message: 'Application not found' });
+    }
+
+    // Update application status
+    application.status = 'rejected';
+    application.updatedAt = Date.now();
+    await application.save();
+
+    res.status(200).json({ success: true, message: 'Application rejected successfully' });
+  } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };

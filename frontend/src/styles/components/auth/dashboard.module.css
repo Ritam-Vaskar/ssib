@@ -1,8 +1,10 @@
 .dashboard {
   display: flex;
   min-height: 100vh;
-  background-color: #f8f9fa;
+  background-color: #fff;
   position: relative;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 .sidebar {
@@ -14,6 +16,7 @@
   position: fixed;
   height: 100vh;
   overflow-y: auto;
+  z-index: 1;
 }
 
 .sidebar h2 {
@@ -21,6 +24,7 @@
   margin-bottom: 2rem;
   font-size: 1.5rem;
   font-weight: 600;
+  text-align: center;
 }
 
 .sidebar nav {
@@ -42,11 +46,13 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  width: 100%;
 }
 
 .sidebar button:hover {
   background-color: #f0f7ff;
   color: #007bff;
+  transform: translateX(5px);
 }
 
 .sidebar button.active {
@@ -59,7 +65,8 @@
   flex: 1;
   padding: 2rem;
   margin-left: 280px;
-  position: relative;
+  width: calc(100% - 280px);
+  min-height: 100vh;
 }
 
 .section {
@@ -68,6 +75,7 @@
   padding: 2rem;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   position: relative;
+  margin-bottom: 2rem;
 }
 
 .section h3 {
@@ -75,12 +83,14 @@
   margin-bottom: 1.5rem;
   font-size: 1.25rem;
   font-weight: 600;
+  text-align: center;
 }
 
 .list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 1.5rem;
+  width: 100%;
 }
 
 .card {
@@ -90,6 +100,8 @@
   padding: 1.5rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
 }
 
 .card:hover {
@@ -102,17 +114,20 @@
   margin-bottom: 1rem;
   font-size: 1.1rem;
   font-weight: 600;
+  text-align: center;
 }
 
 .card p {
   color: #666;
   margin-bottom: 0.75rem;
   font-size: 0.95rem;
+  line-height: 1.5;
 }
 
 .form {
-  max-width: 100%;
-  /* margin: 0 auto; */
+  max-width: 500px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .formGroup {
@@ -134,7 +149,7 @@
   border: 1px solid #dee2e6;
   border-radius: 8px;
   font-size: 1rem;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: all 0.2s ease;
   background-color: #fff;
   color: #005bbd;
 }
@@ -145,6 +160,7 @@
   outline: none;
   border-color: #007bff;
   box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+  transform: translateY(-1px);
 }
 
 .formGroup textarea {
@@ -161,13 +177,17 @@
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s, transform 0.1s;
+  transition: all 0.2s ease;
   width: 100%;
+  display: block;
+  margin: 1.5rem auto 0;
+  max-width: 300px;
 }
 
 .submitButton:hover {
   background-color: #0056b3;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
 }
 
 .submitButton:active {
@@ -197,12 +217,14 @@
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  position: relative;
 }
 
 .modalActions {
   display: flex;
   gap: 1rem;
   margin-top: 1.5rem;
+  justify-content: center;
 }
 
 .billCard {
@@ -212,6 +234,7 @@
   margin-bottom: 1rem;
   background-color: white;
   transition: transform 0.2s, box-shadow 0.2s;
+  width: 100%;
 }
 
 .billCard:hover {
@@ -224,6 +247,8 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .billLink {
@@ -232,12 +257,13 @@
   text-decoration: none;
   margin-top: 1rem;
   font-weight: 500;
-  transition: color 0.2s;
+  transition: all 0.2s ease;
 }
 
 .billLink:hover {
   color: #0056b3;
   text-decoration: underline;
+  transform: translateX(5px);
 }
 
 .pending {
@@ -260,6 +286,7 @@
   gap: 0.75rem;
   margin-top: 1rem;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .statusButtons button {
@@ -269,15 +296,18 @@
   background: none;
   cursor: pointer;
   font-size: 0.9rem;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
   flex: 1;
-  min-width: 100px;
+  min-width: 120px;
+  max-width: 200px;
+  text-align: center;
 }
 
 .statusButtons button.active {
   background-color: #007bff;
   color: white;
   border-color: #007bff;
+  transform: scale(1.05);
 }
 
 .guardInfo {
@@ -285,6 +315,7 @@
   border-radius: 12px;
   padding: 1.5rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  margin-bottom: 1.5rem;
 }
 
 .acceptButton {
@@ -295,11 +326,14 @@
   border-radius: 6px;
   cursor: pointer;
   font-weight: 500;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
+  min-width: 100px;
 }
 
 .acceptButton:hover {
   background-color: #218838;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
 }
 
 .rejectButton {
@@ -310,22 +344,30 @@
   border-radius: 6px;
   cursor: pointer;
   font-weight: 500;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
+  min-width: 100px;
 }
 
 .rejectButton:hover {
   background-color: #c82333;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.2);
 }
 
 .actions {
   margin-top: 1rem;
   display: flex;
   gap: 0.75rem;
+  justify-content: center;
 }
 
 @media (max-width: 1024px) {
   .list {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+
+  .content {
+    padding: 1.5rem;
   }
 }
 
@@ -335,7 +377,7 @@
   }
 
   .sidebar {
-    width: 99vw;
+    width: 100%;
     height: auto;
     position: relative;
     padding: 1.5rem;
@@ -344,6 +386,7 @@
   .content {
     margin-left: 0;
     padding: 1.5rem;
+    width: 100%;
   }
 
   .section {
@@ -360,11 +403,16 @@
   }
 
   .statusButtons {
-    flex-direction: column;
+    flex-direction: row;
   }
 
   .statusButtons button {
-    width: 100%;
+    width: auto;
+  }
+
+  .billHeader {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 
@@ -394,5 +442,19 @@
 
   .submitButton {
     padding: 0.75rem 1.5rem;
+    max-width: 100%;
+  }
+
+  .statusButtons button {
+    min-width: 100%;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .acceptButton,
+  .rejectButton {
+    width: 100%;
   }
 }

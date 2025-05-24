@@ -27,7 +27,22 @@ const ClientDashboard = () => {
     setIsLoading(true)
     try {
       const response = await client.getProfile()
-      setGuardInfo(response.data.assignedGuard || null)
+      const assignedGuard = response.data.activeAssignments?.[0];
+      if (assignedGuard) {
+        setGuardInfo({
+          name: assignedGuard.guard.user.name,
+          email: assignedGuard.guard.user.email,
+          phone: assignedGuard.guard.phoneNumber,
+          experience: assignedGuard.guard.experience,
+          status: assignedGuard.status,
+          shiftTiming: assignedGuard.shift,
+          location: assignedGuard.location,
+          startDate: assignedGuard.startDate,
+          endDate: assignedGuard.endDate
+        });
+      } else {
+        setGuardInfo(null);
+      }
     } catch (err) {
       console.error('Error fetching guard info:', err)
       showToast('Failed to fetch guard information', 'error')
@@ -112,7 +127,10 @@ const ClientDashboard = () => {
                 <p>Contact: {guardInfo.phone}</p>
                 <p>Experience: {guardInfo.experience} years</p>
                 <p>Status: {guardInfo.status}</p>
-                <p>Shift Timing: {guardInfo.shiftTiming}</p>
+                <p>Shift: {guardInfo.shiftTiming}</p>
+                <p>Location: {guardInfo.location.street}, {guardInfo.location.city}, {guardInfo.location.state} {guardInfo.location.zipCode}</p>
+                <p>Start Date: {new Date(guardInfo.startDate).toLocaleDateString()}</p>
+                <p>End Date: {guardInfo.endDate ? new Date(guardInfo.endDate).toLocaleDateString() : 'Ongoing'}</p>
               </div>
             ) : (
               <p>No guard assigned yet</p>
